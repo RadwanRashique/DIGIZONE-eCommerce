@@ -1,0 +1,52 @@
+<%-include("../admin/layouts/header")  %>
+
+
+
+
+            
+        
+            <div class="col-12 " style="background-color: rgb(9, 169, 190);">
+                <div class="bg-danger rounded h-100 p-4 m-3" style="max-width: 800px; margin: 0 auto; background-color: rgb(211, 208, 9); position: relative;left: 40%; transform: translateX(-50%);">
+                  <h1 style="color: rgb(251, 255, 255); text-align: left;">Users Details</h1>
+                  <div style="overflow-x:auto;">
+                    <table style="color: black; width: 100%;">
+                      <tr>
+                        <th>No</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Age</th>
+                        <th>Phone No</th>
+                        <th>BLOCK</th>
+                        
+                      </tr>
+                      <% if(user.length>0) {
+                      for(let i=0; i<user.length; i++) { %>
+                      <tr>
+                        <td><%= i+1 %></td>
+                        <td><%= user[i].name %></td>
+                        <td><%= user[i].email %></td>
+                        <td><%= user[i].age %></td>
+                        <td><%= user[i].phone %></td>
+                        <%if(user[i].is_varified==1){ %>
+                       <td><a href="/admin/block_User?id=<%=user[i]._id%>" ><button >Block</button></a></td>
+                       <%}else{%>
+                       <td><a href="/admin/block_User?id=<%=user[i]._id%>&data=yes"><button style="background-color: rgb(7, 216, 216);">Unblock</button></a></td>
+                    <%}%>
+                      </tr>
+                      <% } } else { %>
+                      <tr>
+                        <td colspan="5" style="background-color: aliceblue;">Users Not Found</td>
+                      </tr>
+                      <% } %>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              
+          
+              
+        </div>
+        <!-- Content End -->
+
+
+     <%-include("../admin/layouts/footer.ejs") %>
