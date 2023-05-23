@@ -400,34 +400,18 @@ const errorPage= async(req,res)=>
 // serach
 const SearchResult = async (req, res) => {
   try {
-      const categories = await category.find()
-      const total = await products.find({ block: 0, $or: [{ catagory: search }, { name: { $regex: ".*" + search + ".*", $options: 'i' } }] })
+   const search = req.body.search
+   const cat = await category.find();
+    const productData=   await   products.find({"name":{ $regex: ".*" + search + ".*", $options: 'i' }})
+    if(productData.length>0)
+    {
+      res.render("shop",{ data:productData,cat})
 
-      if (req.body.category) {
-          const search = req.body.search
-          console.log(req.body.category);
-          console.log(search);
-         
-          const size = Math.ceil(total.length / limit)
-          const data = await products.find({ catagory: req.body.category, $or: [{ name: { $regex: ".*" + search + ".*", $options: 'i' } }] })
-          res.render('women', { data, nextpage: true, tagId:'page-1-link', categories, category: req.body.category, search, size, sort: '' })
-      }
-      else if(req.body.search){
-          const search = req.body.search
-          const totals = await products.find({ block: 0, $or: [{ catagory: search }, { name: { $regex: ".*" + search + ".*", $options: 'i' } }] })
-          const data = await products.find({ block: 0, $or: [{ catagory: search }, { name: { $regex: ".*" + search + ".*", $options: 'i' } }] }).limit(limit)
-          
-          if(data.length>0){
-              const size = Math.ceil(totals.length / limit)
-              res.render('women', { data, nextpage: true,tagId:'page-1-link',categories, category: '', size, search, sort: '' })
-          }else{
-              res.render('cartEmpty', { msg:'Oops! No such a products found ' })
-          }
-        
-      }
-      else {
-          res.render('cartEmpty', { msg:'Oops! No such a products found ' })
-      }
+    }
+    else{
+
+      res.redirect("/shop")
+    }
   } catch (error) {
       console.log(error.message);
   }
