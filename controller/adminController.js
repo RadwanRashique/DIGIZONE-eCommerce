@@ -249,7 +249,7 @@ console.log(error.message);
 const  salesReport= async (req, res) => {
   try {
     
-    orderdetails = await Order.find().sort({ date: -1 }).populate('products.productId')
+    orderdetails = await Order.find({status: { $ne: "Cancelled" }}).sort({ date: -1 }).populate('products.productId')
     const products=orderdetails.products
     
         
@@ -267,7 +267,7 @@ const  salesReport= async (req, res) => {
 };
 
 //sales report
-const SalesFilter=async(req,res)=>
+const   SalesFilter=async(req,res)=>
 {
   try {
 
@@ -278,12 +278,13 @@ const SalesFilter=async(req,res)=>
        
           $gte: datestart,
           $lte: dateend
-        }
+        },status: { $ne: "Cancelled" }
       })
     res.render('salesreport',{order:orderdetails})
     
 }
     
+
     
   catch (error) {
     

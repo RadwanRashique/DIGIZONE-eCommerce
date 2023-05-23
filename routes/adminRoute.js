@@ -173,6 +173,9 @@ admin_route.get("/showOrdrs",adminAuth.isLogin,adminOrderController.adminShowOrd
 admin_route.get("/viewOrder",adminAuth.isLogin,adminOrderController.viewOrder)
 admin_route.post("/orderStatus",adminOrderController.orderStatus)
 
+// to download sales report
+admin_route.get("/downloadSales",adminAuth.isLogin,adminOrderController.downloadSalesReport)
+admin_route.get("/getsalesreport",adminAuth.isLogin,adminOrderController.loadsalesreport)
 
 
 

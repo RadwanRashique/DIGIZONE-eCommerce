@@ -2,9 +2,10 @@
 
 <div class="col-12">
     <div class="bg-secondary rounded h-100 p-4 m-3" >
-        <h5 class="mb-4" style="color: aliceblue;">Sales Report</h5>
+        <h3 class="mb-4" style="color: aliceblue;">Sales Report</h3>
+        <a href="/admin/downloadSales"><button type="button" class="btn btn-warning"  style="position: relative; left: 90%; bottom:50px;">Download</button></a>
         <div class="table-responsive"  style="background-color: rgb(255, 255, 255); ">
-            <table class="table">
+            <table class="table" >
                 <form action="/admin/salesfilter" method="post" >
                     <input id="start-date" type="date" name="start"  > <input id="end-date" type="date" name="end" ><button>filter</button>
                 </form>
@@ -38,6 +39,7 @@
                             
                             <th scope="row" ><%=i+1%></th>
                             <td  ><%=order[i].user%></td>
+                            
                             <td  ><% order[i].products.forEach(product => { %>
                                     
                               <%= product.count %> </p>

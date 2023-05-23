@@ -1,5 +1,8 @@
 const orders = require("../model/ordersModel");
 
+// to download salesreport in excel form
+const exceljs=require("exceljs")
+
 const Address = require("../model/addressModel");
 
 const User = require("../model/userModel");
@@ -12,6 +15,8 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 const Razorpay = require("razorpay");
+
+
 
 var instance = new Razorpay({
   key_id: process.env.key_id,
@@ -386,6 +391,83 @@ const orderStatus = async (req, res) => {
   }
 };
 
+// To download sales report
+
+const downloadSalesReport=async (req,res)=>
+{
+   try {
+   const workbook=  new  exceljs.Workbook()
+   const worksheet = workbook.addWorksheet("My sales report")
+
+   worksheet.columns=
+   [
+    { header:"S no.",key:"s_no" },
+    { header:"User",key:"user" },
+    { header:"Status",key:"status" },
+    
+    { header:"Price",key:"totalAmount" },
+    { header:"PayMethod",key:"paymentMethod" },
+    { header:"Date",key:"date" }
+    
+]
+let counter = 1;
+const orderData = await orders.find({status: { $ne: "Cancelled" }});
+orderData.forEach((order)=>{
+    order.s_no = counter;
+    worksheet.addRow(order);
+    counter++;
+})
+
+worksheet.getRow(1).eachCell((cell)=>{
+    cell.font = { bold:true };
+})
+
+res.setHeader("Content-Type","application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+res.setHeader("Content-Disposition",`attachment;filename=order.xlsx`)
+
+return workbook.xlsx.write(res).then(()=>{
+    res.status(200);
+})
+
+} catch (error) {
+console.log(error.message);
+}
+}
+
+
+const   loadsalesreport = async (req, res) => {
+  try {
+      let from = new Date(req.query.from)
+      let to = new Date(req.query.to)
+
+      req.query.from ? from = new Date(req.query.from) : from = 'ALL'
+      req.query.to ? to = new Date(req.query.to) : to = 'ALL'
+      if (from !== "ALL" && to !== "ALL") {
+
+          const orderdetails = await orders.aggregate([
+              {
+                  $match: {
+                      $and: [{ date: { $gte: from } }, { date: { $lte: to } }]
+
+                  }
+              }
+          ])
+          req.session.Orderdtls = orderdetails
+          const products = orderdetails.products
+
+          res.render('salesReport', { orderdetails, from, to })
+      } else {
+          const orderdetails = await orders.find({ status: { $ne: "cancelled" } })
+          req.session.Orderdtls = orderdetails
+          res.render('salesReport', { orderdetails, from, to })
+      }
+
+  } catch (error) {
+      console.log(error.message);
+  }
+}
+
+
 module.exports = {
   placeOrder,
   loadorderHistory,
@@ -400,4 +482,6 @@ module.exports = {
   adminPlaceOrder,
 
   orderStatus,
+  downloadSalesReport,
+  loadsalesreport
 };

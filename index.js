@@ -1,21 +1,21 @@
-
-
-const dotenv=require("dotenv")
-dotenv.config()
+const dotenv = require("dotenv");
+dotenv.config();
 
 // To connect node.js with data base (library)
 
-const mongoose=require("mongoose")
+const mongoose = require("mongoose");
 
-// pass path   from mongo  
-mongoose.connect(process.env.MONGO)
+// pass path   from mongo
+mongoose.connect(process.env.MONGO);
 
-const path = require('path')
+const path = require("path");
 
+const express = require("express");
+const app = express();
 
-
-const express= require("express")
-const app =express()
+app.set("view engine", "ejs");
+//  for error handling
+app.set("views","./views/admin")
 
 // app.use(express.static(path.join(__dirname,'public')))
 
@@ -28,28 +28,34 @@ app.use((req, res, next) => {
   next();
 });
 
-
 //  for user routes
-const userRoute=require("./routes/userRoute")
-app.use("/",userRoute)
-
+const userRoute = require("./routes/userRoute");
 
 // for admin
-const adminRoute=require('./routes/adminRoute')
+const adminRoute = require("./routes/adminRoute");
+app.use(express.static("public/user"));
+app.use(express.static(path.join(__dirname, "/public")));
+app.use("/", userRoute);
 
-app.use('/admin',adminRoute)
+app.use("/admin", adminRoute);
+
+
+
+//  for error page
+app.use((req, res) => {
+
+  
+  res.status(404).render("404");
+  
+
+});
+
+
 
 
 // to conntect public folder to main page for static view
-// here public is folder which contain font image....      
-app.use(express.static("public/user"))
-
+// here public is folder which contain font image....
 
 //  app.use(express.static("public/admin"))
 
-app.use(express.static(path.join(__dirname,'/public')))
-
-  
-
-
-app.listen(3000,console.log("server is now running well "))
+app.listen(5000, console.log("server is now running well "));
